@@ -8,10 +8,10 @@ import ssl
 import info
 
 
-def send_sms(number, message, provider, credentials, subject='', smtp_server='smtp.gmail.com', smtp_port=465):
+def send_sms(number, message, at, credentials, subject='', smtp_server='smtp.gmail.com', smtp_port=465):
     sender_email = credentials[0]
     email_password = credentials[1]
-    receiver_email = f'{number}@{info.PROVIDERS.get(provider).get("sms")}'
+    receiver_email = f'{number}@{at}'
 
     email_message = f'Subject:{subject}\nTo:{receiver_email}\n{message}'
 

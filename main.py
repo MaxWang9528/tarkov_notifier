@@ -11,7 +11,7 @@ pytesseract.tesseract_cmd = 'Tesseract-OCR\\tesseract.exe'
 
 THRESHOLD = settings.Settings.get('threshold')
 DEBUG_MODE = settings.Settings.get('debug_mode')
-THRESH_MODE = settings.Settings.get('see-what-the-computer-gets')
+THRESH_MODE = settings.Settings.get('see-what-the-computer-sees')
 CAPTURE_DELAY = settings.Settings.get('screen_capture_delay')
 
 NUMBER = settings.userInfo.get('number')
@@ -35,21 +35,22 @@ def screen_image_preprocessing():
 
 
 # Draw bounding boxes around words on the rgb image
-def word_bbox(img, rgb):
-    image_data = pytesseract.image_to_data(img, output_type=Output.DICT)
-    all_words = []
+def word_bbox(th1, rgb):
+    if THRESH_MODE:
+        img = th1
+    else:
+        img = rgb
+    image_data = pytesseract.image_to_data(th1, output_type=Output.DICT)
+    all_words = ''
     for i, word in enumerate(image_data['text']):
         if word != '':
             # print(word)
-            all_words.append(word)
+            all_words += word
             x, y, w, h = image_data['left'][i], image_data['top'][i], image_data['width'][i], image_data['height'][i]
-            cv2.rectangle(rgb, (x, y), (x+w, y+h), (0, 255, 0), 1)
+            cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 1)
 
     if DEBUG_MODE:
-        if THRESH_MODE:
-            cv2.imshow('window', img)
-        else:
-            cv2.imshow('window', rgb)
+        cv2.imshow('window', img)
         cv2.waitKey(0)
     return all_words, rgb
 
