@@ -1,6 +1,6 @@
 pip install -r requirements.txt
 
-install Tesseract-OCR in tarkov_notifier 
+install Tesseract to tarkov_notifier/Tesseract-OCR 
 https://digi.bib.uni-mannheim.de/tesseract/
 
 edit settings.py (credentials stored in plain text stfu)
