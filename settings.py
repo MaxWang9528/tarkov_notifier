@@ -1,4 +1,5 @@
 # https://myaccount.google.com/apppasswords
+
 # possible game states:
 # Matching
 # Loading loot
@@ -8,10 +9,10 @@
 # Unknown
 
 userInfo = {
-    'number': 3033198821,
-    'provider': 'Xfinity Mobile',
+    'number': 1234567890,
+    'provider': 'Provider',  # check info.py
     'email': 'python9528@gmail.com',
-    'app_password': 'oulqnfstaqzaszea',
+    'app_password': 'qwertyuiopasdfgh',
     'screen_width': 1920,
     'screen_height': 1080
 }
@@ -21,6 +22,6 @@ Settings = {
     'see-what-the-computer-sees': False,
     'threshold': 110,
     'screen_capture_delay': 1,
-    'message_type': 'mms',  # sms, mms
+    'message_type': 'mms',  # sms(faster with no image), mms(slower with image)
     'notify_on': ['Loading loot', 'Waiting for players', 'Deploying']
 }
