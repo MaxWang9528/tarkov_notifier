@@ -11,7 +11,7 @@
 userInfo = {
     'number': 1234567890,
     'provider': 'Provider',  # check info.py
-    'email': 'python9528@gmail.com',
+    'email': 'email@gmail.com',
     'app_password': 'qwertyuiopasdfgh',
     'screen_width': 1920,
     'screen_height': 1080
@@ -22,6 +22,6 @@ Settings = {
     'see-what-the-computer-sees': False,
     'threshold': 110,
     'screen_capture_delay': 1,
-    'message_type': 'mms',  # sms(faster with no image), mms(slower with image)
+    'message_type': 'sms',  # sms(faster with no image), mms(slower with image)
     'notify_on': ['Loading loot', 'Waiting for players', 'Deploying']
 }
