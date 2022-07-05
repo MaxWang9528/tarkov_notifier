@@ -4,22 +4,23 @@ import settings
 import time
 from info import PROVIDERS
 import send_notification
+import PIL
+from PIL import Image
 from PIL import ImageGrab
 import numpy as np
 import cv2
 import os
+import pystray
+import threading
+import sys
+
 pytesseract.tesseract_cmd = 'Tesseract-OCR\\tesseract.exe'
 
+T2_STOP = False
 THRESHOLD = settings.Settings.get('threshold')
 DEBUG_MODE = settings.Settings.get('debug_mode')
 THRESH_MODE = settings.Settings.get('see-what-the-computer-sees')
 CAPTURE_DELAY = settings.Settings.get('screen_capture_delay')
-
-NUMBER = settings.userInfo.get('number')
-PROVIDER = settings.userInfo.get('provider')
-EMAIL = settings.userInfo.get('email')
-AT = PROVIDERS.get(PROVIDER).get("mms")
-PASSWORD = settings.userInfo.get('app_password')
 SCREEN_WIDTH = settings.userInfo.get('screen_width')
 SCREEN_HEIGHT = settings.userInfo.get('screen_height')
 POSSIBLE_STATES = settings.states
@@ -27,7 +28,56 @@ NOTIFY_ON = settings.Settings.get('notify_on')
 QUIT_ON = settings.Settings.get('quit_on')
 MESSAGE_TYPE = settings.Settings.get('message_type')
 SAVE_IMAGES = settings.Settings.get('save_sent_images')
+
+NUMBER = settings.userInfo.get('number')
+PROVIDER = settings.userInfo.get('provider')
+EMAIL = settings.userInfo.get('email')
+AT = PROVIDERS.get(PROVIDER).get("mms")
+PASSWORD = settings.userInfo.get('app_password')
 COUNTER = 0
+
+
+# class ThreadwResult(threading.Thread):
+#     def __init__(self, group=None, target=None, name=None, args=(), kwargs={}, *, daemon=None):
+#         self.result = None
+#
+#         def function():
+#             self.result = target(*args, **kwargs)
+#         super().__init__(group=group, target=function, name=name, daemon=daemon)
+#
+#
+# def run_once(f):
+#     def wrapper(*args, **kwargs):
+#         if not wrapper.has_run:
+#             wrapper.has_run = True
+#             return f(*args, **kwargs)
+#     wrapper.has_run = False
+#     return wrapper
+
+
+def tray(state):
+    image = PIL.Image.open('tray_icon.jpg')
+
+    def on_clicked(icon, item):
+        global T2_STOP
+        if str(item) == 'Start':
+            t2.daemon = True
+            T2_STOP = False
+            t2.start()
+        if str(item) == 'Stop':
+            T2_STOP = True
+        if str(item) == 'Quit':
+            icon.stop()
+    icon = pystray.Icon('Tarkov Notifications', image, menu=pystray.Menu(
+        pystray.MenuItem('Start', on_clicked),
+        pystray.MenuItem('Stop', on_clicked),
+        pystray.MenuItem('Quit', on_clicked),
+        pystray.MenuItem(f'State: {state}', on_clicked)
+    ))
+
+    icon.run()
+    # icon.stop() jumps to here
+    sys.exit()
 
 
 # Apply filters to the original image for better recognition
@@ -71,7 +121,7 @@ def get_game_state(all_words):
 def main():
     global COUNTER
     past_states = []
-    while True:
+    while not T2_STOP:
         start = time.time()
         th1, rgb = screen_image_preprocessing()
         if MESSAGE_TYPE == 'sms':
@@ -81,6 +131,7 @@ def main():
                 send_notification.send_sms(NUMBER, state, AT, (EMAIL, PASSWORD))
                 past_states.append(state)
 
+        # only do the extra steps for mms
         else:  # MESSAGE_TYPE == 'mms'
             all_words, rgb = word_bbox(th1, rgb)
             state = get_game_state(all_words)
@@ -110,5 +161,7 @@ if __name__ == '__main__':
     if DEBUG_MODE:
         debug()
     else:
-        main()
+        t1 = threading.Thread(target=tray, args=('Not started',))
+        t2 = threading.Thread(target=main)
 
+        t1.start()
