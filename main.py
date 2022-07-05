@@ -7,6 +7,7 @@ import send_notification
 from PIL import ImageGrab
 import numpy as np
 import cv2
+import os
 pytesseract.tesseract_cmd = 'Tesseract-OCR\\tesseract.exe'
 
 THRESHOLD = settings.Settings.get('threshold')
@@ -17,12 +18,16 @@ CAPTURE_DELAY = settings.Settings.get('screen_capture_delay')
 NUMBER = settings.userInfo.get('number')
 PROVIDER = settings.userInfo.get('provider')
 EMAIL = settings.userInfo.get('email')
+AT = PROVIDERS.get(PROVIDER).get("mms")
 PASSWORD = settings.userInfo.get('app_password')
 SCREEN_WIDTH = settings.userInfo.get('screen_width')
 SCREEN_HEIGHT = settings.userInfo.get('screen_height')
+POSSIBLE_STATES = settings.states
 NOTIFY_ON = settings.Settings.get('notify_on')
+QUIT_ON = settings.Settings.get('quit_on')
 MESSAGE_TYPE = settings.Settings.get('message_type')
-AT = PROVIDERS.get(PROVIDER).get("mms")
+SAVE_IMAGES = settings.Settings.get('save_sent_images')
+COUNTER = 0
 
 
 # Apply filters to the original image for better recognition
@@ -57,37 +62,40 @@ def word_bbox(th1, rgb):
 
 # determines the game state depending on what words were found in the screen capture
 def get_game_state(all_words):
-    if 'Matching...' in all_words:
-        state = 'Matching'
-    elif 'loot...' in all_words:
-        state = 'Loading loot'
-    elif 'Awaiting' in all_words:
-        state = 'Awaiting session start'
-    elif 'Waiting' in all_words:
-        state = 'Waiting for players'
-    elif 'Deploying' in all_words:
-        state = 'Deploying'
-    else:
-        state = 'Unknown'
-    return state
+    for tup in POSSIBLE_STATES:
+        if tup[0] in all_words:
+            return tup[1]
+    return 'Unknown'
 
 
 def main():
+    global COUNTER
     past_states = []
     while True:
         start = time.time()
         th1, rgb = screen_image_preprocessing()
-        all_words, rgb_bbox = word_bbox(th1, rgb)
-        state = get_game_state(all_words)
-        if state in NOTIFY_ON and state not in past_states:
-            past_states.append(state)
-            if MESSAGE_TYPE == 'sms':
+        if MESSAGE_TYPE == 'sms':
+            all_words = pytesseract.image_to_string(th1)
+            state = get_game_state(all_words)
+            if state in NOTIFY_ON and state not in past_states:
                 send_notification.send_sms(NUMBER, state, AT, (EMAIL, PASSWORD))
-            else:
+                past_states.append(state)
+
+        else:  # MESSAGE_TYPE == 'mms'
+            all_words, rgb = word_bbox(th1, rgb)
+            state = get_game_state(all_words)
+            if state in NOTIFY_ON and state not in past_states:
                 title = round(time.time(), 1)
-                cv2.imwrite(f'images/{title}.jpg', rgb_bbox)
+                cv2.imwrite(f'images/{title}.jpg', rgb)
                 send_notification.send_mms(NUMBER, state, AT, (EMAIL, PASSWORD), f'images/{title}.jpg', 'image', 'jpg')
-        print(state)
+                if not SAVE_IMAGES:
+                    os.remove(f'images/{title}.jpg')
+                past_states.append(state)
+
+        print(f'({COUNTER}) {state}')
+        COUNTER += 1
+        if state in QUIT_ON:
+            quit()
         elapsed = time.time() - start
         if CAPTURE_DELAY - elapsed > 0:
             time.sleep(CAPTURE_DELAY - elapsed)  # sleep for the remaining capture delay time
