@@ -61,7 +61,7 @@ def tray():
 
 # Apply filters to the original image for better recognition
 def screen_image_preprocessing():
-    capture = np.array(ImageGrab.grab(bbox=(0, 0, U.get('screen_width'), U.get('screen_height'))), dtype='uint8')
+    capture = np.array(ImageGrab.grab(bbox=S.get('capture-bbox')), dtype='uint8')
     rgb = cv2.cvtColor(capture, cv2.COLOR_BGR2RGB)
     gray = cv2.cvtColor(capture, cv2.COLOR_RGB2GRAY)
     _, th1 = cv2.threshold(gray, S.get('threshold'), 255, cv2.THRESH_BINARY)
@@ -70,7 +70,7 @@ def screen_image_preprocessing():
 
 # Draw bounding boxes around words on the rgb image
 def word_bbox(th1, rgb):
-    if S.get('threshold'):
+    if S.get('see-what-the-computer-sees'):
         img = th1
     else:
         img = rgb
@@ -129,7 +129,7 @@ def main():
         ICON.menu = create_menu(on_clicked)
         print(f'({COUNTER}) {state}')
         COUNTER += 1
-        if state in S.get('quit_on'):
+        if state in S.get('pause_on'):
             on_clicked(ICON, 'Stop')
         elapsed = time.time() - start
         if S.get('screen_capture_delay') - elapsed > 0:
