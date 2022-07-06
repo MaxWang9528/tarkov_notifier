@@ -1,13 +1,17 @@
-https://myaccount.google.com/apppasswords (2FA required)
+1. Install python
 
-https://digi.bib.uni-mannheim.de/tesseract/
+2. Create app password (i. 2FA required ii. select any app/device iii. remember code for later)
 
-create app password
+   https://myaccount.google.com/apppasswords
 
-install tesseract to tarkov_notifier/Tesseract-OCR
+3. Clone repo
 
-pip install -r requirements.txt
+4. Unzip "tarkov_notifier-master.zip"
 
-edit settings.py
+5. Unzip "Tesseract-OCR.zip"
 
-python main.py
+6. Open a terminal at tarkov_notifier-master\tarkov_notifier-master and run "pip install -r requirements.txt"
+
+7. Enter info into settings.py
+
+8. python main.pyw in terminal or double click main.pwy
