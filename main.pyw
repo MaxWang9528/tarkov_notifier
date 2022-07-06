@@ -31,7 +31,7 @@ def create_menu(action):
         pystray.MenuItem('Stop', action),
         pystray.MenuItem('Quit', action),
         pystray.MenuItem(f'State: {STATE}', action),
-        pystray.MenuItem('placeholder', action))
+        pystray.MenuItem('---', action))
     return menu
 
 
