@@ -22,6 +22,6 @@ Settings = {
     'notify_on': ['Loading loot', 'Waiting for players', 'Deploying'],  # notifies if any of these strings are found
     'pause_on': ['Deploying'],              # stops program if any of these strings are found
     'save_sent_images': False,
-    'capture-bbox': (700, 700, 1220, 950)   # x1, y1, x2, y2
+    'capture-bbox': (0, 0, 1920, 1080)   # x1, y1, x2, y2
     # (700, 700, 1220, 950) maybe faster?
 }
