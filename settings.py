@@ -1,7 +1,7 @@
 userInfo = {
-    'number': 1234567890,                   # int
-    'provider': 'Provider Name',            # check info.py for exact name
-    'email': 'email@gmail.com',             # str
+    'number': 1234567890,                   # 10 digit phone number
+    'provider': 'Provider Name',            # check info.py for exact name of any cell service provider
+    'email': 'email@gmail.com',
     'app_password': 'qwertyuiopasdfgh',     # https://myaccount.google.com/apppasswords
 }
 
@@ -14,14 +14,14 @@ states = [
 ]
 
 Settings = {
-    'debug_mode': False,                    # bool
-    'see-what-the-computer-sees': False,    # bool
-    'threshold': 110,                       # int
-    'screen_capture_delay': 1,              # int (seconds)
-    'message_type': 'mms',                  # sms OR mms
+    'debug_mode': False,                    # show a window with the screen capture
+    'see-what-the-computer-sees': False,    # show a window with the preprocessed screen capture
+    'threshold': 110,                       # threshold amount
+    'screen_capture_delay': 1,              # seconds between screen captures
+    'message_type': 'mms',                  # sms with no images OR mms with images
     'notify_on': ['Loading loot', 'Waiting for players', 'Deploying'],  # notifies if any of these strings are found
     'pause_on': ['Deploying'],              # stops program if any of these strings are found
-    'save_sent_images': False,
-    'capture-bbox': (0, 0, 1920, 1080)   # x1, y1, x2, y2
-    # (700, 700, 1220, 950) maybe faster?
+    'save_sent_images': False,              # save the screen capture in /images
+    'capture-bbox': (0, 0, 1920, 1080)      # x1, y1, x2, y2
+                                            # (700, 700, 1220, 950) might be faster?
 }
