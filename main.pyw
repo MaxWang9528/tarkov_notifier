@@ -14,7 +14,7 @@ import pystray
 import threading
 import sys
 
-pytesseract.tesseract_cmd = 'Tesseract-OCR\\tesseract.exe'
+pytesseract.tesseract_cmd = 'Tesseract-OCR\\Tesseract-OCR\\tesseract.exe'
 
 S = settings.Settings
 U = settings.userInfo
